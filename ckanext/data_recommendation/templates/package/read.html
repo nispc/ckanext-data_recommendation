@@ -4,10 +4,10 @@
     <h3>您可能也會有興趣</h3>
     {% for tag, results in h.related_pkgs().items() %}
         {% if results %}
-            <h4>與 <strong>{{ tag }}</strong> 有關</h4>
+            <h4 style="border-bottom: 1px dotted #dddddd;">與 <strong>”{{ tag }}“</strong> 有關</h4>
             <ul>
                 {% for result in results %}
-                    <li>{{ result.title }}</li>
+                    <li><a href="/dataset/{{ result.name }}">{{ result.title }}</a></li>
                 {% endfor %}
             </ul>
         {% endif %}

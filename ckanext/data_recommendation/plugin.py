@@ -29,10 +29,20 @@ class Data_RecommendationPlugin(plugins.SingletonPlugin):
         extract_tags_num = 5
 
         pkg_name = request.environ['PATH_INFO'].split('/')[-1]
+
         pkg_title = toolkit.get_action('package_show')({}, {'id':pkg_name})['title']
 
-        jieba.set_dictionary('dict.txt.big')
-        related_tag_titles = jieba.analyse.extract_tags(pkg_title, topK=extract_tags_num)
+        pkg_tags_result = toolkit.get_action('package_show')({}, {'id':pkg_name})['tags']
+        pkg_tags = [pkg_tag['name'] for pkg_tag in pkg_tags_result]
+
+        related_tag_titles = []
+
+        if True:
+            related_tag_titles += pkg_tags
+
+        if True:
+            jieba.set_dictionary('dict.txt.big')
+            related_tag_titles += jieba.analyse.extract_tags(pkg_title, topK=extract_tags_num)
 
         related_pkgs = {}
         for related_tag_title in related_tag_titles:
