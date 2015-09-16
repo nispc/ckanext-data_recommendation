@@ -1,0 +1,4 @@
+
+        [ckan.plugins]
+        data_recommendation=ckanext.data_recommendation.plugin:Data_RecommendationPlugin
+    

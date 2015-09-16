@@ -1,0 +1,15 @@
+{% ckan_extends %}
+{% block primary_content_inner %}
+  {{ super() }}
+    <h3>您可能也會有興趣</h3>
+    {% for tag, results in h.related_pkgs().items() %}
+        {% if results %}
+            <h4>與 <strong>{{ tag }}</strong> 有關</h4>
+            <ul>
+                {% for result in results %}
+                    <li>{{ result.title }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
