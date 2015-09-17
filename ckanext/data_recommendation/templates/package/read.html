@@ -5,9 +5,12 @@
     {% for tag, results in h.related_pkgs().items() %}
         {% if results %}
             <h4 style="border-bottom: 1px dotted #dddddd;">與 <strong>”{{ tag }}“</strong> 有關</h4>
-            <ul>
+            <ul style="list-style-type:none;margin-left:10px;">
                 {% for result in results %}
-                    <li><a href="/dataset/{{ result.name }}">{{ result.title }}</a></li>
+                    <li style="line-height: 25px;">
+                        <span class="label">{{ result.organization.title }}</span>
+                        <a href="/dataset/{{ result.name }}" style="padding: 5px;">{{ result.title }}</a>
+                    </li>
                 {% endfor %}
             </ul>
         {% endif %}
