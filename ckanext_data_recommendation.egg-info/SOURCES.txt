@@ -3,6 +3,7 @@ README.rst
 setup.py
 ckanext/__init__.py
 ckanext/data_recommendation/__init__.py
+ckanext/data_recommendation/controllers.py
 ckanext/data_recommendation/plugin.py
 ckanext/data_recommendation/fanstatic/data_recommendation.js
 ckanext/data_recommendation/templates/package/read.html

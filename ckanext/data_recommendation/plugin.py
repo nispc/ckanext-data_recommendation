@@ -9,6 +9,10 @@ import pylons.config as config
 class Data_RecommendationPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.ITemplateHelpers)
+    plugins.implements(plugins.IRoutes, inherit=True)
+
+    jiebaDictPath = config.get('ckan.data_recommended.jieba_dict_path', '/usr/lib/ckan/default/src/ckanext-data_recommendation/dict.txt.big')
+    jieba.set_dictionary(jiebaDictPath)
 
     # IConfigurer
 
@@ -23,7 +27,6 @@ class Data_RecommendationPlugin(plugins.SingletonPlugin):
         extractNum = int(config.get('ckan.data_recommended.extract_num', '5'))
         byTag = asbool(config.get('ckan.data_recommended.by_tag', 'true'))
         byTitle = asbool(config.get('ckan.data_recommended.by_title', 'true'))
-        jiebaDictPath = config.get('ckan.data_recommended.jieba_dict_path', '/usr/lib/ckan/default/src/ckanext-data_recommendation/dict.txt.big')
         renderMod = 'front_end'
 
         # fetch pkg info
@@ -31,14 +34,12 @@ class Data_RecommendationPlugin(plugins.SingletonPlugin):
         pkg_title = toolkit.get_action('package_show')({}, {'id':pkg_name})['title']
         pkg_tags = [pkg_tag['name'] for pkg_tag in toolkit.get_action('package_show')({}, {'id':pkg_name})['tags']]
 
-
          # related_tag_titles
         related_tag_titles = set()
         if byTag:
             related_tag_titles.update(set(pkg_tags))
 
         if byTitle:
-            jieba.set_dictionary(jiebaDictPath)
             related_tag_titles.update(
                 set(
                     jieba.analyse.extract_tags(pkg_title, topK=extractNum)
@@ -62,3 +63,14 @@ class Data_RecommendationPlugin(plugins.SingletonPlugin):
 
     def get_helpers(self):
         return {'related_pkgs': self.related_pkgs}
+
+    # IRoutes
+
+    def before_map(self, map):
+        controller = 'ckanext.data_recommendation.controllers:ApiController'
+
+        map.connect('jieba', '/jieba-extract/{text}',
+            controller=controller, action='extract')
+
+
+        return map
