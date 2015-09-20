@@ -1,8 +1,10 @@
 {% ckan_extends %}
 {% block primary_content_inner %}
   {{ super() }}
+  <div data-module="data_recommendation">
+    {% if h.related_pkgs()['mod'] == 'back_end' %}
     <h3>您可能也會有興趣</h3>
-    {% for tag, results in h.related_pkgs().items() %}
+    {% for tag, results in h.related_pkgs()['results'].items() %}
         {% if results %}
             <h4 style="border-bottom: 1px dotted #dddddd;">與 <strong>”{{ tag }}“</strong> 有關</h4>
             <ul style="list-style-type:none;margin-left:10px;">
@@ -15,4 +17,21 @@
             </ul>
         {% endif %}
     {% endfor %}
+    {% endif %}
+    {% if h.related_pkgs()['mod'] == 'front_end' %}
+    <h3>您可能也會有興趣</h3>
+
+    {% resource 'data_recommendation/data_recommendation.js' %}
+    {% for tag in h.related_pkgs()['results'] %}
+        <div class="related_pkg" style="display: none;">
+            <h4 style="border-bottom: 1px dotted #dddddd;">與 <strong>”{{ tag }}“</strong> 有關</h4>
+            <ul style="list-style-type:none;margin-left:10px;">
+            </ul>
+        </div>
+    {% endfor %}
+
+
+    {% endif %}
+  </div>
+
 {% endblock %}

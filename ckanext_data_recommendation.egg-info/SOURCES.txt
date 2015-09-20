@@ -4,6 +4,7 @@ setup.py
 ckanext/__init__.py
 ckanext/data_recommendation/__init__.py
 ckanext/data_recommendation/plugin.py
+ckanext/data_recommendation/fanstatic/data_recommendation.js
 ckanext/data_recommendation/templates/package/read.html
 ckanext/data_recommendation/tests/__init__.py
 ckanext/data_recommendation/tests/test_plugin.py

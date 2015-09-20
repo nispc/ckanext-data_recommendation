@@ -24,13 +24,15 @@ class Data_RecommendationPlugin(plugins.SingletonPlugin):
         byTag = asbool(config.get('ckan.data_recommended.by_tag', 'true'))
         byTitle = asbool(config.get('ckan.data_recommended.by_title', 'true'))
         jiebaDictPath = config.get('ckan.data_recommended.jieba_dict_path', '/usr/lib/ckan/default/src/ckanext-data_recommendation/dict.txt.big')
+        renderMod = 'front_end'
 
         # fetch pkg info
         pkg_name = request.environ['PATH_INFO'].split('/')[-1]
         pkg_title = toolkit.get_action('package_show')({}, {'id':pkg_name})['title']
         pkg_tags = [pkg_tag['name'] for pkg_tag in toolkit.get_action('package_show')({}, {'id':pkg_name})['tags']]
 
-        # fetch related pkg
+
+         # related_tag_titles
         related_tag_titles = set()
         if byTag:
             related_tag_titles.update(set(pkg_tags))
@@ -42,13 +44,21 @@ class Data_RecommendationPlugin(plugins.SingletonPlugin):
                     jieba.analyse.extract_tags(pkg_title, topK=extractNum)
                 )
             )
-        related_pkgs = dict()
-        for related_tag_title in related_tag_titles:
-            related_pkg_results = toolkit.get_action('package_search')({}, {'q': related_tag_title, 'rows': 3})['results']
 
-            related_pkgs[related_tag_title] = related_pkg_results
+        related_pkgs = {}
+        if renderMod == 'back_end':
+            related_pkgs['mod'] = renderMod
+            related_pkgs['results'] = dict()
+            for related_tag_title in related_tag_titles:
+                related_pkg_results = toolkit.get_action('package_search')({}, {'q': related_tag_title, 'rows': 3})['results']
 
-        return related_pkgs
+                related_pkgs['results'][related_tag_title] = related_pkg_results
+
+            return related_pkgs
+        elif renderMod == 'front_end':
+            related_pkgs['results'] = related_tag_titles
+            related_pkgs['mod'] = renderMod
+            return related_pkgs
 
     def get_helpers(self):
         return {'related_pkgs': self.related_pkgs}
