@@ -31,7 +31,7 @@ class Data_RecommendationPlugin(plugins.SingletonPlugin):
         pkg_tags = [pkg_tag['name'] for pkg_tag in toolkit.get_action('package_show')({}, {'id':pkg_name})['tags']]
 
         # fetch related pkg
-        related_tag_titles = {}
+        related_tag_titles = set()
         if byTag:
             related_tag_titles.update(set(pkg_tags))
 
