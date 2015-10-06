@@ -11,15 +11,16 @@ class Data_RecommendationPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.ITemplateHelpers)
     plugins.implements(plugins.IRoutes, inherit=True)
 
-    jiebaDictPath = config.get('ckan.data_recommended.jieba_dict_path', '/usr/lib/ckan/default/src/ckanext-data_recommendation/dict.txt.big')
-    jieba.set_dictionary(jiebaDictPath)
-
     # IConfigurer
 
     def update_config(self, config_):
         toolkit.add_template_directory(config_, 'templates')
         toolkit.add_public_directory(config_, 'public')
         toolkit.add_resource('fanstatic', 'data_recommendation')
+        toolkit.add_resource('fanstatic', 'tag_cloud')
+        toolkit.add_resource('fanstatic', 'stack_chart')
+        toolkit.add_resource('fanstatic', 'jqcloud')
+
 
     @classmethod
     def related_pkgs(cls):
@@ -40,9 +41,10 @@ class Data_RecommendationPlugin(plugins.SingletonPlugin):
             related_tag_titles.update(set(pkg_tags))
 
         if byTitle:
+            tmp = jieba.analyse.extract_tags(pkg_title, topK=extractNum)
             related_tag_titles.update(
                 set(
-                    jieba.analyse.extract_tags(pkg_title, topK=extractNum)
+                    tmp
                 )
             )
 
@@ -65,12 +67,10 @@ class Data_RecommendationPlugin(plugins.SingletonPlugin):
         return {'related_pkgs': self.related_pkgs}
 
     # IRoutes
-
     def before_map(self, map):
-        controller = 'ckanext.data_recommendation.controllers:ApiController'
+        controller = 'ckanext.data_recommendation.controllers:DataLinkedController'
 
-        map.connect('jieba', '/jieba-extract/{text}',
-            controller=controller, action='extract')
-
+        map.connect('data-linked-graph', '/linked-data',
+            controller=controller, action='stack_graph')
 
         return map

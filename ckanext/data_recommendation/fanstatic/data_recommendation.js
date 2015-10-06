@@ -30,4 +30,3 @@ ckan.module('data_recommendation', function ($, _) {
     }
   };
 });
-
