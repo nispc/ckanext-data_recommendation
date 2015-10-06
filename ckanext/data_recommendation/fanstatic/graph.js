@@ -6,9 +6,9 @@
 ckan.module('graph', function ($, _) {
   return {
     initialize: function () {
-    console.log(categories);
+    //console.log(categories);
       $(function() {
-      console.log(categories);
+      // console.log(categories);
         $.getScript("http://code.highcharts.com/highcharts.js").done(function() {
             $(function () {
                 $('#stack_chart').highcharts({
@@ -81,7 +81,7 @@ ckan.module('graph', function ($, _) {
         }
 
 
-       console.log(word_array);
+       //console.log(word_array);
       $(function() {
         $.getScript("/jqcloud-1.0.4.js").done(function() {
             // $('#tag_cloud').html('aaa');
