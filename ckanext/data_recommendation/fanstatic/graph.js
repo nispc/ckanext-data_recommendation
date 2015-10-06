@@ -83,7 +83,7 @@ ckan.module('graph', function ($, _) {
 
        console.log(word_array);
       $(function() {
-        $.getScript("jqcloud-1.0.4.js").done(function() {
+        $.getScript("/jqcloud-1.0.4.js").done(function() {
             // $('#tag_cloud').html('aaa');
             $('#tag_cloud').jQCloud(word_array);
         })
