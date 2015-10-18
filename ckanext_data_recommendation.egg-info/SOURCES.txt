@@ -3,14 +3,16 @@ README.rst
 setup.py
 ckanext/__init__.py
 ckanext/data_recommendation/__init__.py
-ckanext/data_recommendation/controllers.py
 ckanext/data_recommendation/plugin.py
 ckanext/data_recommendation/fanstatic/data_recommendation.js
+ckanext/data_recommendation/public/jqcloud-1.0.4.js
 ckanext/data_recommendation/templates/package/read.html
 ckanext/data_recommendation/tests/__init__.py
 ckanext/data_recommendation/tests/test_plugin.py
+ckanext_data_recommendation.egg-info/.DS_Store
 ckanext_data_recommendation.egg-info/PKG-INFO
 ckanext_data_recommendation.egg-info/SOURCES.txt
 ckanext_data_recommendation.egg-info/dependency_links.txt
 ckanext_data_recommendation.egg-info/entry_points.txt
+ckanext_data_recommendation.egg-info/requires.txt
 ckanext_data_recommendation.egg-info/top_level.txt

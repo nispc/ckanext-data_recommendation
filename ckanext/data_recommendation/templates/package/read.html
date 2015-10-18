@@ -2,36 +2,55 @@
 {% block primary_content_inner %}
   {{ super() }}
   <div data-module="data_recommendation">
-    {% if h.related_pkgs()['mod'] == 'back_end' %}
-    <h3>您可能也會有興趣</h3>
-    {% for tag, results in h.related_pkgs()['results'].items() %}
-        {% if results %}
-            <h4 style="border-bottom: 1px dotted #dddddd;">與 <strong>”{{ tag }}“</strong> 有關</h4>
-            <ul style="list-style-type:none;margin-left:10px;">
-                {% for result in results %}
-                    <li style="line-height: 25px;">
+
+
+
+
+<h3>您可能也會有興趣</h3>
+<p>您有興趣的資料集也可能在這些地方出現：</p>
+
+
+      <div class="tabbable tabs-left" data-module="data_recommendation"> <!-- Only required for left/right tabs -->
+  <ul class="nav nav-tabs" id="tag-nav">
+    <!--li class="active"><a href="#tab1" data-toggle="tab">Section 1</a></li-->
+      {% for tag, results in h.related_pkgs()['results'].items() %}
+          {% if results['result'] %}
+            <li><a href="#{{ tag }}" data-toggle="tab">{{ tag }}</a></li>
+          {% endif %}
+      {% endfor %}
+  </ul>
+  <div class="tab-content active" id="tag-content">
+       {% for tag, results in h.related_pkgs()['results'].items() %}
+      {% if results['result'] %}
+    <div class="tab-pane" id="{{ tag }}">
+
+                 <ul>
+                {% for result in results['result'] %}
+
+                    <li>
                         <span class="label">{{ result.organization.title }}</span>
                         <a href="/dataset/{{ result.name }}" style="padding: 5px;">{{ result.title }}</a>
                     </li>
+
                 {% endfor %}
             </ul>
+        {% if results['rows'] > 20 %}
+        <a href="/dataset?q={{ tag }}" class="btn" style="display: block;">更多結果</a>
         {% endif %}
-    {% endfor %}
-    {% endif %}
-    {% if h.related_pkgs()['mod'] == 'front_end' %}
-    <h3>您可能也會有興趣</h3>
-
-    {% resource 'data_recommendation/data_recommendation.js' %}
-    {% for tag in h.related_pkgs()['results'] %}
-        <div class="related_pkg" style="display: none;">
-            <h4 style="border-bottom: 1px dotted #dddddd;">與 <strong>”{{ tag }}“</strong> 有關</h4>
-            <ul style="list-style-type:none;margin-left:10px;">
-            </ul>
-        </div>
-    {% endfor %}
-
-
-    {% endif %}
+    </div>
+      {% endif %}
+      {% endfor %}
   </div>
+
+          <style>
+              .tab-content > .tab-pane > ul {
+                  list-style-type:none;
+                  margin: 5px 0 10px 5px;
+              }
+              .tab-content > .tab-pane > ul > li  {
+                  line-height: 25px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;
+              }
+          </style>
+{% resource 'data_recommendation/data_recommendation.js' %}
 
 {% endblock %}

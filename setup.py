@@ -14,31 +14,29 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # http://packaging.python.org/en/latest/tutorial.html#version
-    version='0.0.1',
+    version='0.9',
 
-    description='''''',
+    description='''"ckanext-data_recommendation" is a Chinese language data recommendation engine for CKAN, base on a Jieba.''',
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/nispc/ckanext-data_recommendation',
+    url='https://dsp.im',
 
     # Author details
-    author='''nispc''',
+    author='''Bing-Si Ni, Bo-Han Wu''',
     author_email='''nispc@nispc.tw''',
 
     # Choose your license
-    license='AGPL',
+    license='MIT',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         # How mature is this project? Common values are
         # 3 - Alpha
-        # 4 - Beta
+        # 4 - Bet a
         # 5 - Production/Stable
         'Development Status :: 4 - Beta',
 
-        # Pick your license as you wish (should match "license" above)
-        'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
@@ -48,7 +46,7 @@ setup(
 
 
     # What does your project relate to?
-    keywords='''CKAN''',
+    keywords='''ckan, search optimization, zh-tw''',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
@@ -58,7 +56,7 @@ setup(
     # project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/technical.html#install-requires-vs-requirements-files
-    install_requires=[],
+    install_requires=['jieba', 'OpenCC'],
 
     # If there are data files included in your packages that need to be
     # installed, specify them here.  If using Python 2.6 or less, then these

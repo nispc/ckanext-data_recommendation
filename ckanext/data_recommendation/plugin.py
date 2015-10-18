@@ -5,6 +5,7 @@ import jieba
 import jieba.analyse
 from ckan.plugins.toolkit import request, c
 import pylons.config as config
+import opencc
 
 class Data_RecommendationPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
@@ -17,9 +18,6 @@ class Data_RecommendationPlugin(plugins.SingletonPlugin):
         toolkit.add_template_directory(config_, 'templates')
         toolkit.add_public_directory(config_, 'public')
         toolkit.add_resource('fanstatic', 'data_recommendation')
-        toolkit.add_resource('fanstatic', 'tag_cloud')
-        toolkit.add_resource('fanstatic', 'stack_chart')
-        toolkit.add_resource('fanstatic', 'jqcloud')
 
 
     @classmethod
@@ -28,11 +26,11 @@ class Data_RecommendationPlugin(plugins.SingletonPlugin):
         extractNum = int(config.get('ckan.data_recommended.extract_num', '5'))
         byTag = asbool(config.get('ckan.data_recommended.by_tag', 'true'))
         byTitle = asbool(config.get('ckan.data_recommended.by_title', 'true'))
-        renderMod = 'front_end'
 
         # fetch pkg info
         pkg_name = request.environ['PATH_INFO'].split('/')[-1]
         pkg_title = toolkit.get_action('package_show')({}, {'id':pkg_name})['title']
+        pkg_title_s = opencc.convert(pkg_title, config='zhtw2zhcn_s.ini')
         pkg_tags = [pkg_tag['name'] for pkg_tag in toolkit.get_action('package_show')({}, {'id':pkg_name})['tags']]
 
          # related_tag_titles
@@ -41,36 +39,29 @@ class Data_RecommendationPlugin(plugins.SingletonPlugin):
             related_tag_titles.update(set(pkg_tags))
 
         if byTitle:
-            tmp = jieba.analyse.extract_tags(pkg_title, topK=extractNum)
+            tmp = jieba.analyse.extract_tags(pkg_title_s, topK=extractNum)
             related_tag_titles.update(
                 set(
-                    tmp
+                    (opencc.convert(_, config='zhs2zhtw_vp.ini') for _ in tmp)
                 )
             )
 
         related_pkgs = {}
-        if renderMod == 'back_end':
-            related_pkgs['mod'] = renderMod
-            related_pkgs['results'] = dict()
-            for related_tag_title in related_tag_titles:
-                related_pkg_results = toolkit.get_action('package_search')({}, {'q': related_tag_title, 'rows': 3})['results']
 
-                related_pkgs['results'][related_tag_title] = related_pkg_results
+        related_pkgs['results'] = dict()
+        for related_tag_title in related_tag_titles:
+            tmp = toolkit.get_action('package_search')({}, {'q': '"'+related_tag_title+'"', 'rows': 20})
+            related_pkg_results = tmp['results']
+            related_pkgs['results'][related_tag_title] = dict()
 
-            return related_pkgs
-        elif renderMod == 'front_end':
-            related_pkgs['results'] = related_tag_titles
-            related_pkgs['mod'] = renderMod
-            return related_pkgs
+            related_pkgs['results'][related_tag_title]['rows'] =  tmp['count']
+
+            # filte the same title
+            related_pkg_results = [_ for _ in related_pkg_results if _['title'] != pkg_title]
+            related_pkgs['results'][related_tag_title]['result'] =  related_pkg_results
+
+        # related_pkgs['results'][related_tag_title] = sorted(related_pkgs['results'][related_tag_title], key=lambda t: len(t))
+        return related_pkgs
 
     def get_helpers(self):
         return {'related_pkgs': self.related_pkgs}
-
-    # IRoutes
-    def before_map(self, map):
-        controller = 'ckanext.data_recommendation.controllers:DataLinkedController'
-
-        map.connect('data-linked-graph', '/linked-data',
-            controller=controller, action='stack_graph')
-
-        return map
